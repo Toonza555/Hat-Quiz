@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบทดสอบบุคลิกภาพด้านความรัก: หมวกแห่งความรัก</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #ff4d6d;
+            --secondary-color: #c9184a;
+            --accent-color: #ffccd5;
+            --background-color: #fff0f3;
+            --text-color: #590d22;
+            --shadow: 0 8px 20px rgba(201, 24, 74, 0.15);
+            --card-bg: #fff;
+            --option-hover: #fff0f3;
+            --option-selected: #ffccd5;
+            --progress-bg: #ffe5ec;
+        }
+        
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffccd5' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 20px 20px 0 0;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px dashed var(--accent-color);
+            position: relative;
+        }
+        
+        h1 {
+            color: var(--secondary-color);
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            font-size: 1.8rem;
+            text-shadow: 1px 1px 0px var(--accent-color);
+        }
+        
+        .description {
+            color: #666;
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .question-container {
+            display: none;
+            margin-bottom: 2rem;
+            animation: fadeIn 0.5s;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .question-container.active {
+            display: block;
+        }
+        
+        .question {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .question-number {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 36px;
+            height: 36px;
+            background-color: var(--secondary-color);
+            color: white;
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+            font-size: 1rem;
+        }
+        
+        .options {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .option {
+            padding: 1rem 1.5rem;
+            background-color: white;
+            border: 2px solid #eee;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            background-color: var(--option-hover);
+        }
+        
+        .option.selected {
+            background-color: var(--option-selected);
+            border-color: var(--primary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(201, 24, 74, 0.2);
+        }
+        
+        .option-icon {
+            margin-right: 12px;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        
+        button {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(201, 24, 74, 0.3);
+        }
+        
+        button i {
+            margin-right: 0.5rem;
+            margin-left: 0.5rem;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(201, 24, 74, 0.4);
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .progress-container {
+            margin: 2rem 0;
+            background-color: var(--progress-bg);
+            border-radius: 10px;
+            height: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            width: 0;
+            transition: width 0.5s ease;
+        }
+        
+        .result-container {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.8s;
+        }
+        
+        .result-title {
+            font-size: 2rem;
+            color: var(--secondary-color);
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .result-title:after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+        
+        .result-description {
+            margin: 1.5rem 0;
+            line-height: 1.8;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            text-align: left;
+        }
+        
+        .result-image-container {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin: 0 auto;
+            overflow: visible;
+        }
+        
+        .hat-background {
+            width: 200px;
+            height: 200px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            box-shadow: 0 6px 15px rgba(201, 24, 74, 0.2);
+        }
+        
+        .hat-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            z-index: 2;
+            filter: drop-shadow(0 8px 15px rgba(89, 13, 34, 0.3));
+        }
+        
+        .result-traits {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 1.5rem 0;
+        }
+        
+        .trait {
+            background-color: var(--accent-color);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .trait i {
+            margin-right: 6px;
+            font-size: 0.8rem;
+        }
+        
+        .restart-btn {
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
+        
+        .hearts {
+            position: absolute;
+            width: 100%;
+            height: 100px;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .heart {
+            position: absolute;
+            top: -50px;
+            font-size: 20px;
+            color: var(--primary-color);
+            animation: falling 5s infinite linear;
+            opacity: 0.6;
+        }
+        
+        @keyframes falling {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(600px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .love-match {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: var(--option-hover);
+            border-radius: 15px;
+            border-left: 5px solid var(--primary-color);
+        }
+        
+        .love-match h3 {
+            color: var(--secondary-color);
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .love-match h3 i {
+            margin-right: 10px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            
+            .question {
+                font-size: 1.1rem;
+            }
+            
+            .result-image-container {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .hat-image {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .hat-background {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hearts" id="hearts"></div>
+        
+        <header>
+            <h1>🎩 หมวกแห่งความรัก: แบบทดสอบบุคลิกภาพด้านความรัก 💘</h1>
+            <p class="description">ค้นพบรูปแบบความรักและความสัมพันธ์ที่เหมาะกับคุณที่สุดผ่านหมวกแห่งความรัก ตอบคำถาม 10 ข้อสั้นๆ เพื่อค้นหาหมวกที่เป็นตัวแทนบุคลิกภาพความรักของคุณ</p>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- คำถามข้อที่ 1 -->
+            <div class="question-container active" id="q1">
+                <div class="question">
+                    <div class="question-number">1</div>
+                    <div>เมื่อเริ่มต้นความสัมพันธ์ใหม่ คุณมักจะ...</div>
+                </div>
+                <div class="options">
+                    <div class="option" data-type="romantic">
+                        <div class="option-icon"><i class="fas fa-heart"></i></div>
+                        <div>กระตือรือร้นและทุ่มเทความรู้สึกอย่างเต็มที่</div>
+                    </div>
+                    <div class="option" data-type="cautious">
+                        <div class="option-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div>ค่อยๆ เรียนรู้อีกฝ่ายไปทีละขั้น</div>
+                    </div>
+                    <div class="option" data-type="independent">
+                        <div class="option-icon"><i class="fas fa-user"></i></div>
+                        <div>รักษาพื้นที่ส่วนตัวและความเป็นตัวของตัวเอง</div>
+                    </div>
+                    <div class="option" data-type="analytical">
+                        <div class="option-icon"><i class="fas fa-brain"></i></div>
+                        <div>วิเคราะห์ความเข้ากันได้ก่อนเปิดใจ</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- คำถามข้อที่ 2 -->
+            <div class="question-container" id="q2">
+                <div class="question">
+                    <div class="question-number">2</div>
+                    <div>เมื่อมีปัญหาในความสัมพันธ์ คุณมักจะ...</div>
+                </div>
+                <div class="options">
+                    <div class="option" data-type="communicative">
+                        <div class="option-icon"><i class="fas fa-comments"></i></div>
+                        <div>พูดคุยตรงๆ ทันทีเพื่อแก้ไขปัญหา</div>
+                    </div>
+                    <div class="option" data-type="avoidant">
+                        <div class="option-icon"><i class="fas fa-arrow-right"></i></div>
+                        <div>หลีกเลี่ยงการเผชิญหน้าและหวังว่าปัญหาจะหายไปเอง</div>
+                    </div>
+                    <div class="option" data-type="compromiser">
+                        <div class="option-icon"><i class="fas fa-handshake"></i></div>
+                        <div>ยอมเสียสละเพื่อรักษาความสัมพันธ์</div>
+                    </div>
+                    <div class="option" data-type="analytical">
+                        <div class="option-icon"><i class="fas fa-clipboard-list"></i></div>
+                        <div>วิเคราะห์สาเหตุและวางแผนแก้ไขอย่างเป็นระบบ</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- คำถามข้อที่ 3 -->
+            <div class="question-container" id="q3">
+                <div class="question">
+                    <div class="question-number">3</div>
+                    <div>สิ่งที่คุณให้ความสำคัญมากที่สุดในคู่ความสัมพันธ์คือ...</div>
+                </div>
+                <div class="options">
+                    <div class="option" data-type="romantic">
+                        <div class="option-icon"><i class="fas fa-cloud"></i></div>
+                        <div>ความเข้าใจและการสนับสนุนทางอารมณ์</div>
+                    </div>
+                    <div class="option" data-type="practical">
+                        <div class="option-icon"><i class="fas fa-home"></i></div>
+                        <div>ความมั่นคงและการวางแผนอนาคตร่วมกัน</div>
+                    </div>
+                    <div class="option" data-type="passionate">
+                        <div class="option-icon"><i class="fas fa-fire"></i></div>
+                        <div>แรงดึงดูดและความเสน่หา</div>
+                    </div>
+                    <div class="option" data-type="friendship">
+                        <div class="option-icon"><i class="fas fa-users"></i></div>
+                        <div>มิตรภาพและความเป็นเพื่อนที่ดี</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- คำถามข้อที่ 4 -->
+            <div class="question-container" id="q4">
+                <div class="question">
+                    <div class="question-number">4</div>
+                    <div>เวลาว่างของคุณและคนรัก คุณชอบทำอะไรมากที่สุด?</div>
+                </div>
+                <div class="options">
+                    <div class="option" data-type="adventurous">
+                        <div class="option-icon"><i class="fas fa-mountain"></i></div>
+                        <div>ออกไปผจญภัยและทำกิจกรรมตื่นเต้นด้วยกัน</div>
+                    </div>
+                    <div class="option" data-type="homebody">
+                        <div class="option-icon"><i class="fas fa-couch"></i></div>
+                        <div>อยู่บ้าน ดูหนัง ทำอาหารด้วยกัน</div>
+                    </div>
+                    <div class="option" data-type="social">
+                        <div class="option-icon"><i class="fas fa-glass-cheers"></i></div>
+                        <div>ออกไปเจอเพื่อนหรืองานสังสรรค์</div>
+                    </div>
+                    <div class="option" data-type="independent">
+                        <div class="option-icon"><i class="fas fa-book"></i></div>
+                        <div>แยกกันทำกิจกรรมที่แต่ละคนชอบ</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- คำถามข้อที่ 5 -->
+            <div class="question-container" id="q5">
+                <div class="question">
+                    <div class="question-number">5</div>
+                    <div>คุณแสดงความรักต่อคนรักอย่างไร?</div>
+                </div>
+                <div class="options">
+                    <div class="option" data-type="physical">
+                        <div class="option-icon"><i class="fas fa-hand-holding-heart"></i></div>
+                        <div>การสัมผัส กอด จูบ</div>
+                    </div>
+                    <div class="option" data-type="service">
+                        <div class="option-icon"><i class="fas fa-hands-helping"></i></div>
+                        <div>ทำสิ่งต่างๆ เพื่อช่วยเหลือและดูแล</div>
+                    </div>
+                    <div class="option" data-type="verbal">
+                        <div class="option-icon"><i class="fas fa-comment-dots"></i></div>
+                        <div>พูดคำหวานและบอกรักบ่อยๆ</div>
+                    </div>
+                    <div class="option" data-type="gifts">
+                        <div class="option-icon"><i class="fas fa-gift"></i></div>
+                        <div>ให้ของขวัญหรือหาสิ่งพิเศษมาให้</div>
+                    </div>
+                    <div class="option" data-type="quality">
+                        <div class="option-icon"><i class="fas fa-clock"></i></div>
+                        <div>ใช้เวลาคุณภาพด้วยกัน</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- คำถามข้อที่ 6 -->
+            <div class="question-container" id="q6">
+                <div class="question">
+                    <div class="question-number">6</div>
+                    <div>เมื่อคนรักต้องการพื้นที่ส่วนตัว คุณรู้สึกอย่างไร?</div>
+                </div>
+                <div class="options">
+                    <div class="option" data-type="independent">
+                        <div class="option-icon"><i class="fas fa-check-circle"></i></div>
+                        <div>เข้าใจและสนับสนุน เพราะฉันก็ต้องการพื้นที่ส่วนตัวเช่นกัน</div>
+                    </div>
+                    <div class="option" data-type="anxious">
+                        <div class="option-icon"><i class="fas fa-question-circle"></i></div>
+                        <div>รู้สึกไม่มั่นคงและกังวลว่าอาจมีปัญหา</div>
+                    </div>
+                    <div class="option" data-type="compromiser">
+                        <div class="option-icon"><i class="fas fa-balance-scale"></i></div>
+                        <div>พยายามเข้าใจแม้จะรู้สึกเหงาบ้าง</div>
+                    </div>
+                    <div class="option" data-type="clingy">
+                        <div class="option-icon"><i class="fas fa-frown"></i></div>
+                        <div>รู้สึกไม่ดีและอยากอยู่ด้วยกันมากกว่านี้</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- คำถามข้อที่ 7 -->
+            <div class="question-container" id="q7">
+                <div class="question">
+                    <div class="question-number">7</div>
+                    <div>คุณมองอนาคตของความสัมพันธ์อย่างไร?</div>
+                </div>
+                <div class="options">
+                    <div class="option" data-type="planner">
+                        <div class="option-icon"><i class="fas fa-calendar-alt"></i></div>
+                        <div>วางแผนละเอียดทั้งเรื่องแต่งงาน บ้าน และครอบครัว</div>
+                    </div>
+                    <div class="option" data-type="present">
+                        <div class="option-icon"><i class="fas fa-hourglass-half"></i></div>
+                        <div>อยู่กับปัจจุบันและปล่อยให้ความสัมพันธ์เติบโตตามธรรมชาติ</div>
+                    </div>
+                    <div class="option" data-type="traditional">
+                        <div class="option-icon"><i class="fas fa-ring"></i></div>
+                        <div>เชื่อในความรักและการอยู่ด้วยกันตลอดไป</div>
+                    </div>
+                    <div class="option" data-type="flexible">
+                        <div class="option-icon"><i class="fas fa-wind"></i></div>
+                        <div>เปิดกว้างต่อการเปลี่ยนแปลงและปรับตัวไปตามสถานการณ์</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- คำถามข้อที่ 8 -->
+            <div class="question-container" id="q8">
+                <div class="question">
+                    <div class="question-number">8</div>
+                    <div>เมื่อต้องตัดสินใจสำคัญในความสัมพันธ์ คุณมักจะ...</div>
+                </div>
+                <div class="options">
+                    <div class="option" data-type="rational">
+                        <div class="option-icon"><i class="fas fa-balance-scale-right"></i></div>
+                        <div>พิจารณาข้อดีข้อเสียอย่างรอบคอบ</div>
+                    </div>
+                    <div class="option" data-type="intuitive">
+                        <div class="option-icon"><i class="fas fa-heartbeat"></i></div>
+                        <div>ฟังเสียงหัวใจและความรู้สึก</div>
+                    </div>
+                    <div class="option" data-type="compromiser">
+                        <div class="option-icon"><i class="fas fa-hands"></i></div>
+                        <div>หาทางออกที่ทั้งสองฝ่ายพอใจ</div>
+                    </div>
+                    <div class="option" data-type="avoidant">
+                        <div class="option-icon"><i class="fas fa-hourglass-end"></i></div>
+                        <div>ผลัดวันประกันพรุ่งและหลีกเลี่ยงการตัดสินใจ</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- คำถามข้อที่ 9 -->
+            <div class="question-container" id="q9">
+                <div class="question">
+                    <div class="question-number">9</div>
+                    <div>สิ่งที่ทำให้คุณรู้สึกไม่มั่นคงในความสัมพันธ์มากที่สุดคือ...</div>
+                </div>
+                <div class="options">
+                    <div class="option" data-type="trust">
+                        <div class="option-icon"><i class="fas fa-user-secret"></i></div>
+                        <div>การไม่จริงใจหรือโกหก</div>
+                    </div>
+                    <div class="option" data-type="attention">
+                        <div class="option-icon"><i class="fas fa-eye"></i></div>
+                        <div>การไม่ได้รับความสนใจเพียงพอ</div>
+                    </div>
+                    <div class="option" data-type="independence">
+                        <div class="option-icon"><i class="fas fa-chain-broken"></i></div>
+                        <div>การถูกควบคุมหรือจำกัดอิสรภาพ</div>
+                    </div>
+                    <div class="option" data-type="commitment">
+                        <div class="option-icon"><i class="fas fa-question"></i></div>
+                        <div>ความไม่แน่นอนในอนาคตของความสัมพันธ์</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- คำถามข้อที่ 10 -->
+            <div class="question-container" id="q10">
+                <div class="question">
+                    <div class="question-number">10</div>
+                    <div>คุณเชื่อว่าความรักที่แท้จริงคือ...</div>
+                </div>
+                <div class="options">
+                    <div class="option" data-type="fairytale">
+                        <div class="option-icon"><i class="fas fa-magic"></i></div>
+                        <div>ความรู้สึกที่มีต่อกันและกันแบบไม่มีเงื่อนไข เหมือนในนิทาน</div>
+                    </div>
+                    <div class="option" data-type="practical">
+                        <div class="option-icon"><i class="fas fa-puzzle-piece"></i></div>
+                        <div>การตัดสินใจร่วมกันที่จะสร้างชีวิตและแก้ปัญหาไปด้วยกัน</div>
+                    </div>
+                    <div class="option" data-type="growth">
+                        <div class="option-icon"><i class="fas fa-seedling"></i></div>
+                        <div>การเติบโตและพัฒนาไปด้วยกัน ต่างฝ่ายต่างส่งเสริมกัน</div>
+                    </div>
+                    <div class="option" data-type="friendship">
+                        <div class="option-icon"><i class="fas fa-smile-beam"></i></div>
+                        <div>มิตรภาพที่ลึกซึ้งและเข้าใจกันที่สุด</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <button id="prevBtn" disabled><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+                <button id="nextBtn">ถัดไป <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+        
+        <!-- ส่วนแสดงผลลัพธ์ -->
+        <div id="result-container" class="result-container">
+            <h2 class="result-title">หมวกความรักของคุณ: <span id="result-hat-name"></span></h2>
+            
+            <div class="result-image-container">
+                <div class="hat-background"></div>
+                <img src="" alt="หมวกแห่งความรัก" id="hat-image" class="hat-image">
+            </div>
+            
+            <div class="result-description" id="result-description"></div>
+            
+            <div class="result-traits" id="result-traits">
+                <!-- traits จะถูกเพิ่มโดย JavaScript -->
+            </div>
+            
+            <div class="love-match">
+                <h3><i class="fas fa-heart"></i> คู่รักที่เข้ากันได้ดี</h3>
+                <p id="love-match-text"></p>
+            </div>
+            
+            <button class="restart-btn" id="restartBtn"><i class="fas fa-redo"></i> เริ่มทำแบบทดสอบใหม่</button>
+        </div>
+    </div>
+    
+    <script>
+        // ข้อมูลผลลัพธ์
+        const results = {
+            romantic: {
+                name: "หมวกกุหลาบสีแดง",
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath d='M70,80 C70,50 130,50 130,80 L140,150 C140,170 60,170 60,150 Z' fill='%23c9184a'/%3E%3Cpath d='M75,85 C75,60 125,60 125,85 L132,145 C132,162 68,162 68,145 Z' fill='%23ff4d6d'/%3E%3Cpath d='M90,75 A15,15 0 0,1 110,75 A15,15 0 0,1 90,75 Z' fill='%23ffccd5'/%3E%3Cpath d='M80,100 C80,90 120,90 120,100' stroke='%23ffccd5' stroke-width='2' fill='none'/%3E%3C/svg%3E",
+                description: "คุณคือคนที่มีหัวใจโรแมนติก เต็มไปด้วยความรักและความหวัง คุณเชื่อในความรักที่แสนหวานและลึกซึ้ง พร้อมทุ่มเทให้กับความสัมพันธ์อย่างเต็มที่ คุณให้ความสำคัญกับอารมณ์ความรู้สึกและมักจะแสดงออกอย่างชัดเจน ไม่ว่าจะเป็นคำพูด การกระทำ หรือของขวัญเล็กๆ น้อยๆ ที่มีความหมาย คุณมองโลกในแง่ดีเกี่ยวกับความรักและมักจะสร้างบรรยากาศแห่งความรักได้ไม่ว่าจะอยู่ที่ไหน",
+                traits: [
+                    { icon: "fas fa-heart", text: "มีความโรแมนติกสูง" },
+                    { icon: "fas fa-comment-dots", text: "ชอบแสดงความรัก" },
+                    { icon: "fas fa-hand-holding-heart", text: "เอาใจใส่คนรัก" },
+                    { icon: "fas fa-gift", text: "ชอบให้ของขวัญที่มีความหมาย" }
+                ],
+                match: "คุณเข้ากันได้ดีกับ 'หมวกเข็มทิศสีน้ำเงิน' ที่จะช่วยให้ความสัมพันธ์มีทั้งความโรแมนติกและความมั่นคง พวกคุณจะสร้างความสมดุลระหว่างความฝันและความเป็นจริงได้อย่างลงตัว"
+            },
+            analytical: {
+                name: "หมวกเข็มทิศสีน้ำเงิน",
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath d='M60,90 L100,50 L140,90 L140,150 C140,170 60,170 60,150 Z' fill='%234361ee'/%3E%3Cpath d='M70,90 L100,60 L130,90 L130,145 C130,160 70,160 70,145 Z' fill='%234cc9f0'/%3E%3Ccircle cx='100' cy='100' r='15' fill='white'/%3E%3Cpath d='M100,90 L105,100 L100,110 L95,100 Z' fill='%234361ee'/%3E%3Cpath d='M90,100 L100,95 L110,100 L100,105 Z' fill='%234361ee'/%3E%3C/svg%3E",
+                description: "คุณเป็นคนที่ใช้เหตุผลและการวิเคราะห์ในเรื่องความรัก คุณมองความสัมพันธ์อย่างมีกลยุทธ์และระมัดระวัง โดยชอบทำความเข้าใจและคิดให้รอบคอบก่อนจะตัดสินใจเปิดใจ คุณใส่ใจในรายละเอียดและมักจะสังเกตพฤติกรรมของคนรักอย่างละเอียด คุณชอบความชัดเจนและการสื่อสารที่ตรงไปตรงมา ความรักสำหรับคุณไม่ใช่แค่ความรู้สึก แต่เป็นการตัดสินใจที่ต้องมีเหตุผลรองรับ",
+                traits: [
+                    { icon: "fas fa-brain", text: "ใช้เหตุผล" },
+                    { icon: "fas fa-search", text: "ช่างสังเกต" },
+                    { icon: "fas fa-clipboard-list", text: "วางแผนและวิเคราะห์" },
+                    { icon: "fas fa-comments", text: "สื่อสารตรงไปตรงมา" }
+                ],
+                match: "คุณเข้ากันได้ดีกับ 'หมวกกุหลาบสีแดง' ที่จะเติมเต็มด้านอารมณ์และความรู้สึกให้กับคุณ ในขณะที่คุณจะช่วยให้พวกเขามีความมั่นคงและแนวทางที่ชัดเจนในความสัมพันธ์"
+            },
+            independent: {
+                name: "หมวกนกอิสระสีเขียว",
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath d='M60,90 L80,70 L100,60 L120,70 L140,90 L140,150 C140,170 60,170 60,150 Z' fill='%232b9348'/%3E%3Cpath d='M70,90 L85,75 L100,68 L115,75 L130,90 L130,145 C130,160 70,160 70,145 Z' fill='%2355a630'/%3E%3Cpath d='M95,80 L85,70 L75,80 L85,90 Z' fill='%23007f5f'/%3E%3Cpath d='M125,80 L115,70 L105,80 L115,90 Z' fill='%23007f5f'/%3E%3Cpath d='M90,100 C90,95 110,95 110,100' stroke='%23d8f3dc' stroke-width='2' fill='none'/%3E%3C/svg%3E",
+                description: "คุณเป็นคนที่รักอิสระและต้องการพื้นที่ส่วนตัวในความสัมพันธ์ คุณเชื่อว่าความรักที่ดีต้องไม่จำกัดอิสรภาพของกันและกัน แต่ควรเป็นการเติบโตไปด้วยกันโดยที่แต่ละคนยังรักษาความเป็นตัวของตัวเองไว้ได้ คุณต้องการคู่ความสัมพันธ์ที่เข้าใจและเคารพในพื้นที่ส่วนตัวของคุณ ความสัมพันธ์ที่เหมาะกับคุณคือความสัมพันธ์ที่มีทั้งการพึ่งพากันและการเป็นอิสระต่อกันในเวลาเดียวกัน",
+                traits: [
+                    { icon: "fas fa-feather-alt", text: "รักอิสระ" },
+                    { icon: "fas fa-user-circle", text: "ต้องการพื้นที่ส่วนตัว" },
+                    { icon: "fas fa-balance-scale", text: "ต้องการความสมดุล" },
+                    { icon: "fas fa-handshake", text: "เคารพความเป็นปัจเจกของกันและกัน" }
+                ],
+                match: "คุณเข้ากันได้ดีกับ 'หมวกดวงดาวสีม่วง' ที่เข้าใจความต้องการอิสระของคุณ และชื่นชมในความเป็นตัวของคุณเอง พวกคุณจะสร้างความสัมพันธ์ที่มีอิสระแต่ก็ลึกซึ้ง"
+            },
+            compromiser: {
+                name: "หมวกสายรุ้งหลากสี",
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath d='M60,90 L100,60 L140,90 L140,150 C140,170 60,170 60,150 Z' fill='%23ff9e00'/%3E%3Cpath d='M70,90 L100,68 L130,90 L130,145 C130,160 70,160 70,145 Z' fill='%23ff0054'/%3E%3Cpath d='M80,90 L100,76 L120,90 L120,140 C120,150 80,150 80,140 Z' fill='%23390099'/%3E%3Cpath d='M90,90 L100,84 L110,90 L110,135 C110,140 90,140 90,135 Z' fill='%239e0059'/%3E%3C/svg%3E",
+                description: "คุณเป็นคนที่ยืดหยุ่นและเต็มใจที่จะประนีประนอมในความสัมพันธ์ คุณเข้าใจว่าความรักต้องอาศัยการปรับตัวและการยอมรับในความแตกต่าง คุณมีความอดทนสูงและพร้อมที่จะหาทางออกที่ทุกฝ่ายพอใจ คุณเป็นนักฟังที่ดีและมีความเห็นอกเห็นใจผู้อื่น ซึ่งช่วยให้คุณเข้าใจมุมมองของคนรัก คุณเชื่อว่าความรักคือการเติบโตไปด้วยกันและพร้อมที่จะเปลี่ยนแปลงเพื่อให้ความสัมพันธ์ดำเนินไปได้ด้วยดี",
+                traits: [
+                    { icon: "fas fa-handshake", text: "ยืดหยุ่นและประนีประนอม" },
+                    { icon: "fas fa-ear", text: "เป็นผู้ฟังที่ดี" },
+                    { icon: "fas fa-heart", text: "มีความเห็นอกเห็นใจ" },
+                    { icon: "fas fa-sync", text: "พร้อมปรับตัว" }
+                ],
+                match: "คุณเข้ากันได้ดีกับ 'หมวกปราสาทสีทอง' ที่จะเห็นคุณค่าในความเสียสละและยืดหยุ่นของคุณ พวกคุณจะสร้างความสัมพันธ์ที่มั่นคงและกลมเกลียวได้อย่างดี"
+            },
+            passionate: {
+                name: "หมวกเปลวไฟสีส้ม",
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath d='M60,90 L80,60 L100,80 L120,60 L140,90 L140,150 C140,170 60,170 60,150 Z' fill='%23d00000'/%3E%3Cpath d='M70,90 L85,65 L100,85 L115,65 L130,90 L130,145 C130,160 70,160 70,145 Z' fill='%23e85d04'/%3E%3Cpath d='M80,90 L90,70 L100,90 L110,70 L120,90 L120,140 C120,150 80,150 80,140 Z' fill='%23ffba08'/%3E%3C/svg%3E",
+                description: "คุณเป็นคนที่มีความหลงใหลและเต็มไปด้วยพลังในเรื่องความรัก คุณรักอย่างเข้มข้นและต้องการความรู้สึกที่ลึกซึ้ง คุณเชื่อในความรักที่มีทั้งแรงปรารถนาและความเข้าใจ คุณต้องการความตื่นเต้นและความท้าทายในความสัมพันธ์ ไม่ชอบความจำเจ ความรักสำหรับคุณคือการผจญภัยที่เต็มไปด้วยอารมณ์และประสบการณ์ร่วมกัน คุณมักจะแสดงความรู้สึกอย่างชัดเจนและคาดหวังให้คู่ของคุณมีความหลงใหลเช่นเดียวกัน",
+                traits: [
+                    { icon: "fas fa-fire", text: "มีความหลงใหล" },
+                    { icon: "fas fa-bolt", text: "เต็มไปด้วยพลัง" },
+                    { icon: "fas fa-mountain", text: "ชอบความท้าทาย" },
+                    { icon: "fas fa-heart-broken", text: "รักอย่างเข้มข้น" }
+                ],
+                match: "คุณเข้ากันได้ดีกับ 'หมวกนกอิสระสีเขียว' ที่จะให้พื้นที่สำหรับความหลงใหลของคุณ และช่วยให้ความสัมพันธ์มีทั้งไฟและอิสระที่จะเติบโต"
+            },
+            practical: {
+                name: "หมวกปราสาทสีทอง",
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath d='M60,90 L80,70 L100,60 L120,70 L140,90 L140,150 C140,170 60,170 60,150 Z' fill='%23774936'/%3E%3Cpath d='M70,90 L85,75 L100,68 L115,75 L130,90 L130,145 C130,160 70,160 70,145 Z' fill='%23b08968'/%3E%3Cpath d='M80,90 L80,70 L90,70 L90,90 Z' fill='%23ddb892'/%3E%3Cpath d='M110,90 L110,70 L120,70 L120,90 Z' fill='%23ddb892'/%3E%3Cpath d='M95,90 L95,60 L105,60 L105,90 Z' fill='%23ddb892'/%3E%3C/svg%3E",
+                description: "คุณเป็นคนที่มีความเป็นจริงและใช้เหตุผลในเรื่องความรัก คุณมองความสัมพันธ์เป็นการสร้างรากฐานที่มั่นคงสำหรับอนาคต คุณให้ความสำคัญกับความไว้ใจ ความซื่อสัตย์ และการวางแผนร่วมกัน คุณชอบความชัดเจนและความคงเส้นคงวา ไม่หลงไปกับอารมณ์ชั่ววูบ คุณเชื่อว่าความรักที่แท้จริงต้องยั่งยืนและผ่านบททดสอบของเวลา การตัดสินใจเรื่องความรักของคุณมักจะรอบคอบและคำนึงถึงความเป็นไปได้ในระยะยาว",
+                traits: [
+                    { icon: "fas fa-home", text: "สร้างความมั่นคง" },
+                    { icon: "fas fa-shield-alt", text: "น่าไว้วางใจ" },
+                    { icon: "fas fa-calendar-alt", text: "วางแผนอนาคต" },
+                    { icon: "fas fa-hand-holding", text: "ให้การสนับสนุนที่เป็นรูปธรรม" }
+                ],
+                match: "คุณเข้ากันได้ดีกับ 'หมวกสายรุ้งหลากสี' ที่จะเติมเต็มด้านความยืดหยุ่นและการปรับตัว ในขณะที่คุณจะช่วยให้ความสัมพันธ์มีความมั่นคงและมีทิศทาง"
+            },
+            intuitive: {
+                name: "หมวกดวงดาวสีม่วง",
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath d='M60,90 L100,50 L140,90 L140,150 C140,170 60,170 60,150 Z' fill='%237b2cbf'/%3E%3Cpath d='M70,90 L100,60 L130,90 L130,145 C130,160 70,160 70,145 Z' fill='%239d4edd'/%3E%3Ccircle cx='85' cy='90' r='5' fill='white'/%3E%3Ccircle cx='115' cy='90' r='5' fill='white'/%3E%3Ccircle cx='100' cy='110' r='5' fill='white'/%3E%3Ccircle cx='90' cy='120' r='3' fill='white'/%3E%3Ccircle cx='110' cy='120' r='3' fill='white'/%3E%3Ccircle cx='80' cy='105' r='3' fill='white'/%3E%3Ccircle cx='120' cy='105' r='3' fill='white'/%3E%3C/svg%3E",
+                description: "คุณเป็นคนที่มีความเข้าใจลึกซึ้งและมีญาณสังหรณ์ที่ดีในเรื่องความรัก คุณเชื่อในพลังของจิตวิญญาณและการเชื่อมโยงที่ลึกกว่าคำพูดหรือการกระทำ คุณมองเห็นศักยภาพและแก่นแท้ของคนได้ดี และมักจะรู้สึกถึงอารมณ์ของคนรักแม้พวกเขาจะไม่ได้บอก คุณชอบการสนทนาที่มีความหมายและลึกซึ้ง คุณแสวงหาความสัมพันธ์ที่มีการเติบโตทางจิตวิญญาณและการเข้าใจตนเองมากขึ้น",
+                traits: [
+                    { icon: "fas fa-star", text: "มีความเข้าใจลึกซึ้ง" },
+                    { icon: "fas fa-lightbulb", text: "มีญาณสังหรณ์ดี" },
+                    { icon: "fas fa-infinity", text: "เชื่อในพลังของจิตวิญญาณ" },
+                    { icon: "fas fa-search-plus", text: "มองเห็นศักยภาพในตัวคน" }
+                ],
+                match: "คุณเข้ากันได้ดีกับ 'หมวกนกอิสระสีเขียว' เพราะทั้งคู่เข้าใจในความลึกซึ้งของกันและกัน และให้พื้นที่ในการค้นหาตัวตนที่แท้จริง"
+            }
+        };
+        
+        // ตัวแปรเก็บคำตอบ
+        let answers = {};
+        let currentQuestion = 1;
+        const totalQuestions = 10;
+        
+        // DOM Elements
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressBar = document.getElementById('progressBar');
+        const quizContainer = document.getElementById('quiz-container');
+        const resultContainer = document.getElementById('result-container');
+        const restartBtn = document.getElementById('restartBtn');
+        
+        // Event Listeners
+        prevBtn.addEventListener('click', prevQuestion);
+        nextBtn.addEventListener('click', nextQuestion);
+        restartBtn.addEventListener('click', restartQuiz);
+        
+        // เพิ่ม event listener ให้กับตัวเลือกทั้งหมด
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', () => {
+                const questionContainer = option.closest('.question-container');
+                const questionId = questionContainer.id.replace('q', '');
+                
+                // ยกเลิกการเลือกตัวเลือกก่อนหน้า
+                questionContainer.querySelectorAll('.option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                // เลือกตัวเลือกปัจจุบัน
+                option.classList.add('selected');
+                
+                // บันทึกคำตอบ
+                answers[questionId] = option.getAttribute('data-type');
+                
+                // เปิดใช้งานปุ่มถัดไปเมื่อเลือกคำตอบแล้ว
+                nextBtn.disabled = false;
+            });
+        });
+        
+        // Function เปลี่ยนคำถามไปข้อถัดไป
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                document.getElementById(`q${currentQuestion}`).classList.remove('active');
+                currentQuestion++;
+                document.getElementById(`q${currentQuestion}`).classList.add('active');
+                
+                // อัปเดตปุ่มย้อนกลับ
+                prevBtn.disabled = false;
+                
+                // อัปเดตปุ่มถัดไป
+                if (!answers[currentQuestion]) {
+                    nextBtn.disabled = true;
+                } else {
+                    nextBtn.disabled = false;
+                }
+                
+                // เปลี่ยนข้อความปุ่มเมื่อถึงคำถามสุดท้าย
+                if (currentQuestion === totalQuestions) {
+                    nextBtn.innerHTML = 'ดูผลลัพธ์ <i class="fas fa-chart-bar"></i>';
+                }
+            } else {
+                // แสดงผลลัพธ์เมื่อตอบครบทุกข้อ
+                showResult();
+            }
+            
+            // อัปเดต Progress Bar
+            updateProgressBar();
+        }
+        
+        // Function เปลี่ยนคำถามไปข้อก่อนหน้า
+        function prevQuestion() {
+            if (currentQuestion > 1) {
+                document.getElementById(`q${currentQuestion}`).classList.remove('active');
+                currentQuestion--;
+                document.getElementById(`q${currentQuestion}`).classList.add('active');
+
+                // อัปเดตปุ่มย้อนกลับ
+                prevBtn.disabled = currentQuestion === 1;
+
+                // อัปเดตปุ่มถัดไป
+                nextBtn.disabled = !answers[currentQuestion];
+
+                // เปลี่ยนข้อความปุ่มกลับเป็น "ถัดไป" หากยังไม่ถึงคำถามสุดท้าย
+                if (currentQuestion < totalQuestions) {
+                    nextBtn.innerHTML = 'ถัดไป <i class="fas fa-arrow-right"></i>';
+                }
+            }
+
+            // อัปเดต Progress Bar
+            updateProgressBar();
+        }
+
+        // Function แสดงผลลัพธ์
+        function showResult() {
+            let typeCount = {};
+            Object.values(answers).forEach(type => {
+                typeCount[type] = (typeCount[type] || 0) + 1;
+            });
+
+            let resultType = Object.keys(typeCount).reduce((a, b) => typeCount[a] > typeCount[b] ? a : b);
+            let result = results[resultType];
+
+            // อัปเดตข้อมูลผลลัพธ์
+            document.getElementById('result-hat-name').innerText = result.name;
+            document.getElementById('hat-image').src = result.image;
+            document.getElementById('result-description').innerText = result.description;
+            document.getElementById('love-match-text').innerText = result.match;
+
+            // เพิ่มคุณลักษณะของบุคลิกภาพ
+            let traitsContainer = document.getElementById('result-traits');
+            traitsContainer.innerHTML = '';
+            result.traits.forEach(trait => {
+                let traitElem = document.createElement('div');
+                traitElem.classList.add('trait');
+                traitElem.innerHTML = `<i class="${trait.icon}"></i> ${trait.text}`;
+                traitsContainer.appendChild(traitElem);
+            });
+
+            // ซ่อนแบบทดสอบและแสดงผลลัพธ์
+            quizContainer.style.display = 'none';
+            resultContainer.style.display = 'block';
+        }
+
+        // Function อัปเดต Progress Bar
+        function updateProgressBar() {
+            let progress = (currentQuestion / totalQuestions) * 100;
+            progressBar.style.width = progress + '%';
+        }
+
+        // Function เริ่มทำแบบทดสอบใหม่
+        function restartQuiz() {
+            answers = {};
+            currentQuestion = 1;
+
+            // รีเซ็ต UI
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            document.querySelectorAll('.question-container').forEach(q => q.classList.remove('active'));
+            document.getElementById('q1').classList.add('active');
+
+            // แสดงแบบทดสอบและซ่อนผลลัพธ์
+            quizContainer.style.display = 'block';
+            resultContainer.style.display = 'none';
+
+            // รีเซ็ตปุ่ม
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
+            nextBtn.innerHTML = 'ถัดไป <i class="fas fa-arrow-right"></i>';
+
+            // รีเซ็ต Progress Bar
+            updateProgressBar();
+        }
+
+        // เริ่มต้น Progress Bar
+        updateProgressBar();
+    </script>
+</body>
+</html>
