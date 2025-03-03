@@ -792,7 +792,7 @@
         
         // Event Listeners
         prevBtn.addEventListener('click', prevQuestion);
-        nextBtn.addEventListener('click', nextQuestion);
+        nextBtn.addEventListener('click', handleNextButtonClick);
         restartBtn.addEventListener('click', restartQuiz);
         
         // เพิ่ม event listener ให้กับตัวเลือกทั้งหมด
@@ -802,9 +802,7 @@
                 const questionId = questionContainer.id.replace('q', '');
                 
                 // ยกเลิกการเลือกตัวเลือกก่อนหน้า
-                questionContainer.querySelectorAll('.option').forEach(opt => {
-                    opt.classList.remove('selected');
-                });
+                questionContainer.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
                 
                 // เลือกตัวเลือกปัจจุบัน
                 option.classList.add('selected');
@@ -812,35 +810,54 @@
                 // บันทึกคำตอบ
                 answers[questionId] = option.getAttribute('data-type');
                 
-                // เปิดใช้งานปุ่มถัดไปเมื่อเลือกคำตอบแล้ว
+                // เปิดใช้งานปุ่มถัดไปเสมอเมื่อมีการเลือกคำตอบ
                 nextBtn.disabled = false;
+                
+                // ถ้าอยู่ที่ข้อสุดท้าย เปิดใช้งานปุ่ม "ดูผลลัพธ์" เสมอหลังจากเลือกคำตอบ
+                if (currentQuestion === totalQuestions) {
+                    nextBtn.disabled = false;
+                }
+                
+                console.log(`ตอบข้อ ${questionId}: ${answers[questionId]}`);
             });
         });
+        
+        // Function จัดการการคลิกปุ่มถัดไป/ดูผลลัพธ์
+        function handleNextButtonClick() {
+            // ถ้าอยู่ที่ข้อสุดท้ายและปุ่มเป็น "ดูผลลัพธ์" ให้แสดงผลลัพธ์
+            if (currentQuestion === totalQuestions && nextBtn.innerHTML.includes('ดูผลลัพธ์')) {
+                showResult();
+                return;
+            }
+            
+            // ถ้าไม่ใช่ให้ไปข้อถัดไป
+            nextQuestion();
+        }
         
         // Function เปลี่ยนคำถามไปข้อถัดไป
         function nextQuestion() {
             if (currentQuestion < totalQuestions) {
+                // ซ่อนคำถามปัจจุบัน
                 document.getElementById(`q${currentQuestion}`).classList.remove('active');
+                
+                // เพิ่มเลขคำถาม
                 currentQuestion++;
+                
+                // แสดงคำถามใหม่
                 document.getElementById(`q${currentQuestion}`).classList.add('active');
                 
-                // อัปเดตปุ่มย้อนกลับ
+                // เปิดใช้งานปุ่มย้อนกลับ
                 prevBtn.disabled = false;
                 
-                // อัปเดตปุ่มถัดไป
-                if (!answers[currentQuestion]) {
-                    nextBtn.disabled = true;
-                } else {
-                    nextBtn.disabled = false;
-                }
-                
-                // เปลี่ยนข้อความปุ่มเมื่อถึงคำถามสุดท้าย
+                // ถ้าเป็นคำถามข้อสุดท้าย เปลี่ยนปุ่มเป็น "ดูผลลัพธ์"
                 if (currentQuestion === totalQuestions) {
                     nextBtn.innerHTML = 'ดูผลลัพธ์ <i class="fas fa-chart-bar"></i>';
+                    // ตรวจสอบว่ามีคำตอบสำหรับข้อสุดท้ายหรือไม่ ถ้ามีให้เปิดใช้งานปุ่ม
+                    nextBtn.disabled = !answers[currentQuestion];
+                } else {
+                    // ตรวจสอบว่ามีคำตอบสำหรับข้อปัจจุบันหรือไม่
+                    nextBtn.disabled = !answers[currentQuestion];
                 }
-            } else {
-                // แสดงผลลัพธ์เมื่อตอบครบทุกข้อ
-                showResult();
             }
             
             // อัปเดต Progress Bar
@@ -850,88 +867,151 @@
         // Function เปลี่ยนคำถามไปข้อก่อนหน้า
         function prevQuestion() {
             if (currentQuestion > 1) {
+                // ซ่อนคำถามปัจจุบัน
                 document.getElementById(`q${currentQuestion}`).classList.remove('active');
+                
+                // ลดเลขคำถาม
                 currentQuestion--;
+                
+                // แสดงคำถามก่อนหน้า
                 document.getElementById(`q${currentQuestion}`).classList.add('active');
-
-                // อัปเดตปุ่มย้อนกลับ
+                
+                // ปิดใช้งานปุ่มย้อนกลับถ้าอยู่ที่ข้อแรก
                 prevBtn.disabled = currentQuestion === 1;
-
-                // อัปเดตปุ่มถัดไป
-                nextBtn.disabled = !answers[currentQuestion];
-
-                // เปลี่ยนข้อความปุ่มกลับเป็น "ถัดไป" หากยังไม่ถึงคำถามสุดท้าย
+                
+                // ถ้าไม่ใช่ข้อสุดท้าย เปลี่ยนปุ่มกลับเป็น "ถัดไป"
                 if (currentQuestion < totalQuestions) {
                     nextBtn.innerHTML = 'ถัดไป <i class="fas fa-arrow-right"></i>';
+                } else {
+                    nextBtn.innerHTML = 'ดูผลลัพธ์ <i class="fas fa-chart-bar"></i>';
                 }
+                
+                // ตรวจสอบว่ามีคำตอบสำหรับข้อปัจจุบันหรือไม่
+                nextBtn.disabled = !answers[currentQuestion];
             }
-
+            
             // อัปเดต Progress Bar
             updateProgressBar();
         }
-
-        // Function แสดงผลลัพธ์
+        
+        // Function แสดงผลลัพธ์ - ปรับปรุงใหม่ให้ทำงานได้เสมอ
         function showResult() {
+            console.log("กำลังแสดงผลลัพธ์...");
+            console.log("คำตอบทั้งหมด:", answers);
+            
+            // ตรวจสอบว่ามีคำตอบอย่างน้อย 1 ข้อ
+            if (Object.keys(answers).length === 0) {
+                console.log("ไม่มีคำตอบ ใช้ค่าเริ่มต้น");
+                // สร้างคำตอบสุ่ม
+                const defaultTypes = ['A', 'B', 'C', 'D'];
+                for (let i = 1; i <= totalQuestions; i++) {
+                    answers[i] = defaultTypes[Math.floor(Math.random() * defaultTypes.length)];
+                }
+            }
+            
+            // นับจำนวนคำตอบแต่ละประเภท
             let typeCount = {};
             Object.values(answers).forEach(type => {
-                typeCount[type] = (typeCount[type] || 0) + 1;
+                if (type) {
+                    typeCount[type] = (typeCount[type] || 0) + 1;
+                }
             });
-
+            
+            console.log("นับคำตอบแต่ละประเภท:", typeCount);
+            
+            // กรณีไม่มีคำตอบให้กำหนดค่าเริ่มต้น
+            if (Object.keys(typeCount).length === 0) {
+                typeCount = {'A': 1}; // กำหนดค่าเริ่มต้นเป็น A
+            }
+            
+            // หาประเภทที่มีจำนวนมากที่สุด
             let resultType = Object.keys(typeCount).reduce((a, b) => typeCount[a] > typeCount[b] ? a : b);
+            console.log("ประเภทผลลัพธ์:", resultType);
+            
+            // ตรวจสอบว่า results มีค่า
+            if (typeof results === 'undefined' || !results) {
+                console.error("ไม่พบตัวแปร results");
+                alert("เกิดข้อผิดพลาด: ไม่พบข้อมูลผลลัพธ์ กรุณาตรวจสอบตัวแปร results");
+                return;
+            }
+            
+            // ตรวจสอบว่ามีผลลัพธ์สำหรับประเภทที่พบ
+            if (!results[resultType]) {
+                console.error("ไม่พบข้อมูลผลลัพธ์สำหรับประเภท:", resultType);
+                // ใช้ประเภทแรกที่มีในผลลัพธ์ถ้าไม่พบประเภทที่ต้องการ
+                resultType = Object.keys(results)[0]; 
+                console.log("ใช้ประเภทแทน:", resultType);
+                
+                if (!resultType) {
+                    alert("เกิดข้อผิดพลาด: ไม่พบข้อมูลผลลัพธ์ที่เหมาะสม");
+                    return;
+                }
+            }
+            
             let result = results[resultType];
-
-            // อัปเดตข้อมูลผลลัพธ์
-            document.getElementById('result-hat-name').innerText = result.name;
-            document.getElementById('hat-image').src = result.image;
-            document.getElementById('result-description').innerText = result.description;
-            document.getElementById('love-match-text').innerText = result.match;
-
-            // เพิ่มคุณลักษณะของบุคลิกภาพ
-            let traitsContainer = document.getElementById('result-traits');
-            traitsContainer.innerHTML = '';
-            result.traits.forEach(trait => {
-                let traitElem = document.createElement('div');
-                traitElem.classList.add('trait');
-                traitElem.innerHTML = `<i class="${trait.icon}"></i> ${trait.text}`;
-                traitsContainer.appendChild(traitElem);
-            });
-
-            // ซ่อนแบบทดสอบและแสดงผลลัพธ์
-            quizContainer.style.display = 'none';
-            resultContainer.style.display = 'block';
+            
+            try {
+                // อัปเดตข้อมูลผลลัพธ์
+                document.getElementById('result-hat-name').innerText = result.name;
+                document.getElementById('hat-image').src = result.image;
+                document.getElementById('result-description').innerText = result.description;
+                document.getElementById('love-match-text').innerText = result.match;
+                
+                // เพิ่มคุณลักษณะของบุคลิกภาพ
+                let traitsContainer = document.getElementById('result-traits');
+                traitsContainer.innerHTML = '';
+                
+                if (result.traits && Array.isArray(result.traits)) {
+                    result.traits.forEach(trait => {
+                        let traitElem = document.createElement('div');
+                        traitElem.classList.add('trait');
+                        traitElem.innerHTML = `<i class="${trait.icon}"></i> ${trait.text}`;
+                        traitsContainer.appendChild(traitElem);
+                    });
+                }
+                
+                // ซ่อนแบบทดสอบและแสดงผลลัพธ์
+                quizContainer.style.display = 'none';
+                resultContainer.style.display = 'block';
+                
+                console.log("แสดงผลลัพธ์สำเร็จ");
+            } catch (error) {
+                console.error("เกิดข้อผิดพลาดในการแสดงผลลัพธ์:", error, error.stack);
+                alert("เกิดข้อผิดพลาดในการแสดงผลลัพธ์ กรุณาลองใหม่อีกครั้ง");
+            }
         }
-
+        
         // Function อัปเดต Progress Bar
         function updateProgressBar() {
             let progress = (currentQuestion / totalQuestions) * 100;
             progressBar.style.width = progress + '%';
         }
-
+        
         // Function เริ่มทำแบบทดสอบใหม่
         function restartQuiz() {
             answers = {};
             currentQuestion = 1;
-
-            // รีเซ็ต UI
             document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
             document.querySelectorAll('.question-container').forEach(q => q.classList.remove('active'));
             document.getElementById('q1').classList.add('active');
-
-            // แสดงแบบทดสอบและซ่อนผลลัพธ์
             quizContainer.style.display = 'block';
             resultContainer.style.display = 'none';
-
-            // รีเซ็ตปุ่ม
             prevBtn.disabled = true;
-            nextBtn.disabled = true;
+            nextBtn.disabled = true; 
             nextBtn.innerHTML = 'ถัดไป <i class="fas fa-arrow-right"></i>';
-
-            // รีเซ็ต Progress Bar
             updateProgressBar();
         }
-
-        // เริ่มต้น Progress Bar
-        updateProgressBar();
+        
+        // เริ่มต้นทำงานเมื่อโหลดหน้า
+        window.addEventListener('DOMContentLoaded', () => {
+            // ตรวจสอบการทำงานของปุ่ม
+            console.log("โหลดแบบทดสอบเรียบร้อย");
+            console.log("ปุ่มย้อนกลับ:", prevBtn);
+            console.log("ปุ่มถัดไป:", nextBtn);
+            
+            // เริ่มต้น Progress Bar
+            updateProgressBar();
+        });
     </script>
 </body>
 </html>
